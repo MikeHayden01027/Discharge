@@ -48,22 +48,11 @@ Use as a [remarkable](https://github.com/jonschlinkert/remarkable) plugin.
 
 ### toc.json
 
-Object for creating a custom TOC.
 
-```js
-toc('# AAA\n## BBB\n### CCC\nfoo').json;
-
-// results in
-[ { content: 'AAA', slug: 'aaa', lvl: 1 },
-  { content: 'BBB', slug: 'bbb', lvl: 2 },
-  { content: 'CCC', slug: 'ccc', lvl: 3 } ]
-```
 
 ### toc.insert
 
-Insert a table of contents immediately after an _opening_ `<!-- toc -->` code comment, or replace an existing TOC if both an _opening_ comment and a _closing_ comment (`<!-- tocstop -->`) are found.
 
-_(This strategy works well since code comments in markdown are hidden when viewed as HTML, like when viewing a README on GitHub README for example)._
 
 **Example**
 
