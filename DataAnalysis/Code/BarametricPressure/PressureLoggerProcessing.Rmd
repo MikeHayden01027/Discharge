@@ -1,0 +1,79 @@
+---
+title: "Water Level Data"
+author: "Michael Hayden"
+date: "4/2/2018"
+output: html_document
+---
+
+### Load Packages
+```{r}
+library(tidyverse)
+library(here)
+library(lubridate) 
+```
+
+
+### Functions
+```{r, echo=FALSE , warning=FALSE , message=FALSE}
+
+#--------------------------------
+# Troll Logger DataBase Generator 
+#--------------------------------
+
+
+TrollDataBaseGenerator <- function(pAth , rIver , sIte , lAtitude , lOngitude){
+
+
+list.files(path = pAth , full.names = TRUE) %>%
+lapply( function(i) {read.csv(i, header=TRUE, skip=71)} )  %>%
+dplyr::bind_rows() %>%
+dplyr::mutate(river = rIver ,
+              site = sIte ,
+              Date.and.Time = mdy_hms(Date.and.Time) ,
+              detectionDate= format(Date.and.Time, '%d/%m/%Y') ,
+              time=format(Date.and.Time, '%H:%M:%S') ,
+              latitude = lAtitude ,
+              longitude = lOngitude ) %>%
+dplyr::rename("pressure_psi" = "Pressure..PSI." , "temp_C" = "Temperature..C." , "depth_ft" = "Depth..ft.") %>%
+dplyr::select(river , site , latitude , longitude , detectionDate , time , pressure_psi , temp_C , depth_ft)
+  
+}
+
+#--------------------------------
+# Hobo Logger DataBase Generator 
+#--------------------------------
+
+HoboDataBaseGenerator <- function(pAth , rIver , sIte , lAtitude , lOngitude){
+
+
+d <- list.files(path = pAth , full.names = TRUE) %>%
+     lapply( function(i) {read.csv(i, header=TRUE, skip=2)} ) %>%  
+     dplyr::bind_rows() %>%
+     dplyr::mutate(river = rIver ,
+                   site = sIte ,
+                   latitude = lAtitude ,
+                   longitude = lOngitude )
+     names(d)[1] <- "#"
+     names(d)[2] <- "date"
+     names(d)[3] <- "pressure_psi" 
+     names(d)[4] <- "temp_C" 
+     
+d %>% dplyr::select(river , site , latitude , longitude , date  , pressure_psi , temp_C ) %>% 
+      dplyr::mutate(date = mdy_hms(date) ,
+                    detectionDate= format(date, '%d/%m/%Y') ,
+                    time=format(date, '%H:%M:%S') ) %>%
+      dplyr::select(river , site , latitude , longitude , detectionDate , time , pressure_psi , temp_C ) 
+}
+
+```
+
+
+### Test Functions
+```{r, echo=FALSE , warning=FALSE , message=FALSE}
+
+TrollDataBaseGenerator("~/Desktop/Test" , "westBrook" , "One" , 42.432128 , -72.667070)
+
+HoboDataBaseGenerator("~/Desktop/Jimmy" , "westBrook" , "One" , 42.432128 , -72.667070)
+
+```
+

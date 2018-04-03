@@ -1,0 +1,42 @@
+---
+title: "Transect Calculations"
+author: "Michael Hayden"
+date: "3/30/2018"
+output: html_document
+---
+
+### Load Packages
+```{r}
+library(here)
+library(dplyr)
+library(tidyr)
+```
+
+
+### Load Data
+```{r}
+#-----------------------------------
+# Read csv's and bind rows togeather
+#-----------------------------------
+
+transectRaw <- bind_rows(read.csv( here::here("DataAnalysis" , "DataIn" , "Transects" , "Jimmy" , "Jimmy_Transect_Raw.csv")),
+                         read.csv( here::here("DataAnalysis" , "DataIn" , "Transects" , "Obear" , "Obear_Transect_Raw.csv")))
+
+
+```
+
+### Calculate Discharge
+```{r}
+
+#-------------------------------------------------------
+# Group by detectionDate , river , site and steak height
+# Summarise all the individual subseciton discharge.
+#-------------------------------------------------------
+
+
+transectDischarge <- transectRaw %>% mutate( subSectionWidth = sectionWidth / division ,
+                                             subSectionDischarge  = (subSectionWidth * depth * velocity)) %>%
+                                     select(detectionDate , river , site , steakHeight , sectionWidth , subSectionDischarge) %>%
+                                     group_by(detectionDate , river , site , steakHeight) %>%
+                                     summarise(discharge = sum(subSectionDischarge))
+````
